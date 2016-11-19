@@ -3,17 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:text="NEWS"
-        android:textStyle="normal|bold"
-        android:padding="20dp" />
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/query"
+        android:hint="Band Name..." />
 
-    <ListView
+    <Button
+        android:text="GET NEWS"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:id="@+id/fetch_button" />
 </LinearLayout>
