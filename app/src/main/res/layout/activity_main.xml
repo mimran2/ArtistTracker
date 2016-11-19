@@ -9,37 +9,79 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.example.jareddonohue.artisttracker.MainActivity">
+    tools:context="com.example.jareddonohue.artisttracker.MainActivity"
+    android:weightSum="1">
 
 
-    <TableLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TableRow
+        <Button
+            android:id="@+id/mainNewsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="news" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_alignParentTop="true"
+            android:text="artists"
+            android:id="@+id/mainArtistsBtn" />
+
+        <Button
+            android:id="@+id/mainPlaylistsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="playlist" />
+
+        <Button
+            android:text="prev"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/button2"
+            android:id="@+id/mainPreviousBtn" />
+
+        <Button
+            android:text="play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainNextBtn"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/mainArtistsBtn" />
+
+        <Button
+            android:text="next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/mainPlayBtn"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
+
+        <ListView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mainArtistsBtn"
+            android:layout_toEndOf="@+id/mainNewsBtn"
+            android:layout_alignParentStart="true"
+            android:id="@+id/all_artists_news_list"
+            android:layout_above="@+id/seekBar5" />
 
-            <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button4" />
-
-            <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button3" />
-
-            <Button
-                android:text="Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/button2" />
-        </TableRow>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/mainNextBtn"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/seekBar5" />
 
 
-    </TableLayout>
+    </RelativeLayout>
+
 </LinearLayout>

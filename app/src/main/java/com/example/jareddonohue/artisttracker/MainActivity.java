@@ -11,9 +11,9 @@ public class MainActivity extends AppCompatActivity {
 
     EditText query;
     Button fetchButton;
-    private String COUNTRY  = "us";
+    private String COUNTRY = "us";
     private String LANGUAGE = "en";
-    private String QUERY    = "";
+    private String QUERY = "";
     private String finalUrl;
     private HandleXML obj;
 
@@ -24,26 +24,22 @@ public class MainActivity extends AppCompatActivity {
 
         query = (EditText) findViewById(R.id.query);
 
-        fetchButton=(Button)findViewById(R.id.fetch_button);
-        fetchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                QUERY = query.getText().toString();
-                finalUrl = getSearchQuery(QUERY);
-                obj = new HandleXML(finalUrl);
-                obj.fetchXML();
-                while(obj.parsingComplete);
-            }
-        });
+
+        QUERY = query.getText().toString();
+        finalUrl = getSearchQuery(QUERY);
+        obj = new HandleXML(finalUrl);
+        obj.fetchXML();
+        while (obj.parsingComplete) ;
+
     }
 
-    private String getSearchQuery(String query){
+    private String getSearchQuery(String query) {
         query = query.toLowerCase();
         String[] words = query.split(" ");
         String result = "";
 
         int i;
-        for(i = 0; i < words.length -1; i++){
+        for (i = 0; i < words.length - 1; i++) {
             result += words[i] + "+";
         }
         result += words[i];
