@@ -5,6 +5,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -12,9 +13,8 @@ import java.util.ArrayList;
 public class HandleXML {
     private String title = "title";
     private String link = "link";
-    private String description = "description";
     private String urlString = null;
-    private ArrayList<NewsItem> newsItems;
+    public ArrayList<NewsItem> newsItems;
     private XmlPullParserFactory xmlFactoryObject;
     public volatile boolean parsingComplete = true;
 
@@ -24,16 +24,8 @@ public class HandleXML {
         this.newsItems = new ArrayList<>(20);
     }
 
-    public String getTitle(){
-        return title;
-    }
-
-    public String getLink(){
-        return link;
-    }
-
-    public String getDescription(){
-        return description;
+    public ArrayList<NewsItem> getNewsItems(){
+        return this.newsItems;
     }
 
     public void parseXMLAndStoreIt(XmlPullParser myParser) {
@@ -42,7 +34,7 @@ public class HandleXML {
 
         try {
             event = myParser.getEventType();
-            NewsItem currNewsItem = new NewsItem();
+            NewsItem currNewsItem;
 
             while (event != XmlPullParser.END_DOCUMENT) {
                 String name=myParser.getName();
@@ -68,7 +60,7 @@ public class HandleXML {
 
                         else if(name.equals("item")){
                             currNewsItem = new NewsItem(title, link);
-                            newsItems.add(currNewsItem);
+                            this.newsItems.add(currNewsItem);
                             title = "";
                             link  = "";
                         }
@@ -89,9 +81,8 @@ public class HandleXML {
             e.printStackTrace();
         }
 
-        for(NewsItem n : newsItems){
-            System.out.println(n);
-        }
+        System.out.println("\n\n" + newsItems.size() + "\n\n");
+
     }
 
     public void fetchXML(){
@@ -123,6 +114,7 @@ public class HandleXML {
                 }
 
                 catch (Exception e) {
+                    System.out.println(e);
                 }
             }
         });
