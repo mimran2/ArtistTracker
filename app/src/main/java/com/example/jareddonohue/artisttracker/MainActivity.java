@@ -15,17 +15,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-<<<<<<< HEAD
-    EditText query;
-    Button fetchButton;
     private String COUNTRY = "us";
     private String LANGUAGE = "en";
-    private String QUERY = "";
-=======
-    private String COUNTRY  = "us";
-    private String LANGUAGE = "en";
-    private String QUERY    = "Red Hot Chili Peppers";
->>>>>>> refs/remotes/jdonohue44/master
+    private String QUERY = "Red Hot Chili Peppers";
     private String finalUrl;
     private HandleXML xmlHandler;
     ArrayAdapter<NewsItem> adapter;
@@ -36,16 +28,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-<<<<<<< HEAD
-
-        QUERY = query.getText().toString();
-        finalUrl = getSearchQuery(QUERY);
-        obj = new HandleXML(finalUrl);
-        obj.fetchXML();
-        while (obj.parsingComplete) ;
-
-=======
         finalUrl = getSearchQuery(QUERY);
         xmlHandler = new HandleXML(finalUrl);
         xmlHandler.fetchXML();
@@ -53,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         listItems = xmlHandler.getNewsItems();
 
         initializeListView();
->>>>>>> refs/remotes/jdonohue44/master
     }
 
     private String getSearchQuery(String query) {

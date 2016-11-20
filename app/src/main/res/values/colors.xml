@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <!--changed colorPrimaryDark to be the same color as top nav bar button color -->
+    <color name="colorPrimaryDark">#90A4AE</color>
     <color name="colorAccent">#4040ff</color>
+    <color name="colorNavBarBackground">#90A4AE</color>
+    <color name="colorNavBarText">#ffffff</color>
 </resources>
