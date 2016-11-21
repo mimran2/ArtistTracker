@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String COUNTRY  = "us";
+    private String COUNTRY = "us";
     private String LANGUAGE = "en";
-    private String QUERY    = "Adele";
+    private String QUERY = "Red Hot Chili Peppers";
     private String finalUrl;
     private HandleXML xmlHandler;
     ArrayAdapter<NewsItem> adapter;
