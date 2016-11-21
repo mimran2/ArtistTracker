@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private String COUNTRY = "us";
     private String LANGUAGE = "en";
     private String QUERY = "Red Hot Chili Peppers";
+    private ArrayList<String> artistList = new ArrayList<>();
     private String linkOfUrl = "";
     public final static String URL_TO_LOAD = "";
     private String finalUrl;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         finalUrl = getSearchQuery(QUERY);
         xmlHandler = new HandleXML(finalUrl, QUERY);
