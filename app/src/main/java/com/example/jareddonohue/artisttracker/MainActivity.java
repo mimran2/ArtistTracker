@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private String COUNTRY = "us";
     private String LANGUAGE = "en";
     private String QUERY = "Red Hot Chili Peppers";
+    private String linkOfUrl = "";
     public final static String URL_TO_LOAD = "";
     private String finalUrl;
     private HandleXML xmlHandler;
@@ -64,11 +65,18 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String url = getLinkToUrl(listItems.get(position).getLink());
                 Intent intent = new Intent(getApplicationContext(), ArticleView.class);
-                intent.putExtra(URL_TO_LOAD, finalUrl);
+                intent.putExtra(URL_TO_LOAD, url);
                 startActivity(intent);
             }
         });
         adapter.notifyDataSetChanged();
+    }
+
+    private String getLinkToUrl(String url){
+        String[] getUrl = url.split("url=");
+        String link = getUrl[1];
+        return link;
     }
 }
