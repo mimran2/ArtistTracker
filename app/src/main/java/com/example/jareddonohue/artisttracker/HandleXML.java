@@ -15,13 +15,15 @@ public class HandleXML {
     private String link = "link";
     private String urlString = null;
     public ArrayList<NewsItem> newsItems;
+    public String artist;
     private XmlPullParserFactory xmlFactoryObject;
     public volatile boolean parsingComplete = true;
 
-    public HandleXML(String url){
+    public HandleXML(String url, String artist){
 
         this.urlString = url;
         this.newsItems = new ArrayList<>(20);
+        this.artist = artist;
     }
 
     public ArrayList<NewsItem> getNewsItems(){
@@ -59,7 +61,7 @@ public class HandleXML {
                         }
 
                         else if(name.equals("item")){
-                            currNewsItem = new NewsItem(title, link);
+                            currNewsItem = new NewsItem(title, link, artist);
                             this.newsItems.add(currNewsItem);
                             title = "";
                             link  = "";
