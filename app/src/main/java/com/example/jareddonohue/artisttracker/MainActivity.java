@@ -43,6 +43,20 @@ public class MainActivity extends AppCompatActivity {
         display the ListView of NewsItems using the NewsItemAdapter class
          */
         initializeListView();
+
+        /*
+        action listener for Playlist button in top nav bar
+        right now it only opens the PlaylistActivity and does not pass any data
+         */
+        Button openPlaylistActivityBtn = (Button) findViewById(R.id.mainPlaylistsBtn);
+        openPlaylistActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //action for button goes here
+                Intent openPlaylistActivityIntent = new Intent(MainActivity.this, PlaylistActivity.class);
+                startActivity(openPlaylistActivityIntent);
+            }
+        });
     }
 
     private void loadTrackedArtists(){
