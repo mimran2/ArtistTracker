@@ -42,6 +42,20 @@ public class MainActivity extends AppCompatActivity {
         listItems = xmlHandler.getNewsItems();
 
         initializeListView();
+
+        /*
+        action listener for Playlist button in top nav bar
+        right now it only opens the PlaylistActivity and does not pass any data
+         */
+        Button openPlaylistActivityBtn = (Button) findViewById(R.id.mainPlaylistsBtn);
+        openPlaylistActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //action for button goes here
+                Intent openPlaylistActivityIntent = new Intent(MainActivity.this, PlaylistActivity.class);
+                startActivity(openPlaylistActivityIntent);
+            }
+        });
     }
 
     private String getSearchQuery(String query) {
