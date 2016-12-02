@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -57,6 +58,20 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(openPlaylistActivityIntent);
             }
         });
+
+        /*
+        action listener for Artists button in top nav bar
+        right now it only opens the ArtistsActivity and does not pass any data
+         */
+        Button openArtistsActivityBtn = (Button) findViewById(R.id.mainArtistsBtn);
+        openArtistsActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //action for button goes here
+                Intent openPlaylistActivityIntent = new Intent(MainActivity.this, ArtistsActivity.class);
+                startActivity(openPlaylistActivityIntent);
+            }
+        });
     }
 
     private void loadTrackedArtists(){
@@ -72,19 +87,24 @@ public class MainActivity extends AppCompatActivity {
     private void fetchNewsItems(ArrayList<String> artistList){
         // first search http://pitchfork.com/rss/news/
         // and http://www.rollingstone.com/music/rss for any matches
-        // to our tracked artists.
+        // with our tracked artists.
 
         for(String artist : artistList){
             finalUrl = getGoogleSearchQuery(artist);
             xmlHandler = new HandleXML(finalUrl, artist);
             xmlHandler.fetchXML();
             while(xmlHandler.parsingComplete);
+
+            // add top two stories to list to be displayed in News Feed
             listItems.add(xmlHandler.getNewsItems().get(0));
             listItems.add(xmlHandler.getNewsItems().get(1));
         }
 
     }
 
+    // format the Artist to Google RSS format (i.e. Red Hot Chili Peppers
+    // ==> red+hot+chili+peppers) and return the fully formatted Google
+    // RSS query string
     private String getGoogleSearchQuery(String query) {
         query = query.toLowerCase();
         String[] words = query.split(" ");
@@ -117,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
     }
 
+    // parse RSS <link> for the actual url
     private String getLinkToUrl(String url){
         String[] getUrl = url.split("url=");
         String link = getUrl[1];

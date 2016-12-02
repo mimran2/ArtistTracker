@@ -1,6 +1,7 @@
 package com.example.jareddonohue.artisttracker;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +15,8 @@ import java.util.Comparator;
 import android.net.Uri;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -32,6 +35,46 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
+        songView = (ListView) findViewById(R.id.song_list);
+        songList = new ArrayList<Song>();
+
+        /*
+        action listener for News button in top nav bar
+        right now it only opens the MainActivity and does not pass any data
+         */
+        Button openMainActivityBtn = (Button) findViewById(R.id.mainNewsBtn);
+        openMainActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //action for button goes here
+                Intent openPlaylistActivityIntent = new Intent(PlaylistActivity.this, MainActivity.class);
+                startActivity(openPlaylistActivityIntent);
+            }
+        });
+
+                /*
+        action listener for Artists button in top nav bar
+        right now it only opens the ArtistsActivity and does not pass any data
+         */
+        Button openArtistsActivityBtn = (Button) findViewById(R.id.mainArtistsBtn);
+        openArtistsActivityBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //action for button goes here
+                Intent openPlaylistActivityIntent = new Intent(PlaylistActivity.this, ArtistsActivity.class);
+                startActivity(openPlaylistActivityIntent);
+            }
+        });
+
+        getPermissions();
+        fetchSongList();
+
+        //create new instance of adapter class and set it to listView
+        SongAdapter songAdt = new SongAdapter(this, songList);
+        songView.setAdapter(songAdt);
+    }
+
+    private void getPermissions(){
         //ask for permissions at runtime
         if (ContextCompat.checkSelfPermission(PlaylistActivity.this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -55,47 +98,6 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         }
         //end of runtime permissions code block
-
-
-        songView = (ListView) findViewById(R.id.song_list);
-        songList = new ArrayList<>();
-
-        getSongList();
-
-        //sort the songs alphabetically
-        Collections.sort(songList, new Comparator<Song>() {
-            public int compare(Song a, Song b) {
-                return a.getTitle().compareTo(b.getTitle());
-            }
-        });
-
-        //create new instance of adapter class and set it to listView
-        SongAdapter songAdt = new SongAdapter(this, songList);
-        songView.setAdapter(songAdt);
-    }
-
-    public void getSongList() {
-        //retrieve song info
-        ContentResolver musicResolver = getContentResolver();
-        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
-        if (musicCursor != null && musicCursor.moveToFirst()) {
-            //get columns
-            int titleColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media.TITLE);
-            int idColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media._ID);
-            int artistColumn = musicCursor.getColumnIndex
-                    (android.provider.MediaStore.Audio.Media.ARTIST);
-            //add songs to list
-            do {
-                long thisId = musicCursor.getLong(idColumn);
-                String thisTitle = musicCursor.getString(titleColumn);
-                String thisArtist = musicCursor.getString(artistColumn);
-                songList.add(new Song(thisId, thisTitle, thisArtist));
-            }
-            while (musicCursor.moveToNext());
-        }
     }
 
     //method to request runtime permissions
@@ -119,5 +121,36 @@ public class PlaylistActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    public void fetchSongList() {
+        //retrieve song info
+        ContentResolver musicResolver = getContentResolver();
+        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            //get columns
+            int titleColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media._ID);
+            int artistColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.ARTIST);
+            //add songs to list
+            do {
+                long thisId = musicCursor.getLong(idColumn);
+                String thisTitle = musicCursor.getString(titleColumn);
+                String thisArtist = musicCursor.getString(artistColumn);
+                songList.add(new Song(thisId, thisTitle, thisArtist));
+            }
+            while (musicCursor.moveToNext());
+        }
+
+        //sort the songs alphabetically
+        Collections.sort(songList, new Comparator<Song>() {
+            public int compare(Song a, Song b) {
+                return a.getTitle().compareTo(b.getTitle());
+            }
+        });
     }
 }
