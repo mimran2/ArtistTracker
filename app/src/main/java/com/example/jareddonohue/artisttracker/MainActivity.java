@@ -1,6 +1,7 @@
 package com.example.jareddonohue.artisttracker;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -28,22 +29,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
-        grab the artists we want to fetch news on and
-        store them in ArrayList<String> artistList
-        */
-        loadTrackedArtists();
-
-        /*
-        fetch XML, parse it and store the NewsItems (Title, Link)
-        in ArrayList<NewsItem> listItems
-         */
-        fetchNewsItems(artistList);
-
-        /*
-        display the ListView of NewsItems using the NewsItemAdapter class
-         */
-        initializeListView();
+        new GetNewsOperation().execute("");
 
         /*
         action listener for Playlist button in top nav bar
@@ -74,33 +60,74 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadTrackedArtists(){
-        artistList = new ArrayList<String>();
-        artistList.add("The Growlers");
-        artistList.add("STRFKR");
-        artistList.add("Kanye West");
-        artistList.add("Funkadelic");
-        artistList.add("Led Zeppelin");
-        artistList.add("Red Hot Chili Peppers");
-    }
+    private class GetNewsOperation extends AsyncTask<String, String, String> {
 
-    private void fetchNewsItems(ArrayList<String> artistList){
-        // first search http://pitchfork.com/rss/news/
-        // and http://www.rollingstone.com/music/rss for any matches
-        // with our tracked artists.
+        @Override
+        protected void onPreExecute(){
 
-        for(String artist : artistList){
-            finalUrl = getGoogleSearchQuery(artist);
-            xmlHandler = new HandleXML(finalUrl, artist);
-            xmlHandler.fetchXML();
-            while(xmlHandler.parsingComplete);
-
-            // add top two stories to list to be displayed in News Feed
-            listItems.add(xmlHandler.getNewsItems().get(0));
-            listItems.add(xmlHandler.getNewsItems().get(1));
         }
 
+        @Override
+        protected String doInBackground(String... params){
+            loadTrackedArtists();
+            fetchNewsItems(artistList);
+            return "done";
+        }
+
+        @Override
+        protected void onPostExecute(String result){
+            /*
+            get rid of the progress bar
+             */
+            findViewById(R.id.progressBar).setVisibility(View.GONE);
+
+            /*
+            show list
+            */
+            findViewById(R.id.all_artists_news_list).setVisibility(View.VISIBLE);
+
+            /*
+            display the ListView of NewsItems using the NewsItemAdapter class
+            */
+            initializeListView();
+        }
+
+        /*
+        fetch XML, parse it and store the NewsItems (Title, Link)
+        in ArrayList<NewsItem> listItems
+        */
+        private void fetchNewsItems(ArrayList<String> artistList){
+            // first search http://pitchfork.com/rss/news/
+            // and http://www.rollingstone.com/music/rss for any matches
+            // with our tracked artists.
+
+            for(String artist : artistList){
+                finalUrl = getGoogleSearchQuery(artist);
+                xmlHandler = new HandleXML(finalUrl, artist);
+                xmlHandler.fetchXML();
+                while(xmlHandler.parsingComplete);
+
+                // add top two stories to list to be displayed in News Feed
+                listItems.add(xmlHandler.getNewsItems().get(0));
+                listItems.add(xmlHandler.getNewsItems().get(1));
+            }
+        }
+
+        /*
+        grab the artists we want to fetch news on and
+        store them in ArrayList<String> artistList
+        */
+        private void loadTrackedArtists(){
+            artistList = new ArrayList<String>();
+            artistList.add("The Growlers");
+            artistList.add("STRFKR");
+            artistList.add("Kanye West");
+            artistList.add("Funkadelic");
+            artistList.add("Led Zeppelin");
+            artistList.add("Red Hot Chili Peppers");
+        }
     }
+
 
     // format the Artist to Google RSS format (i.e. Red Hot Chili Peppers
     // ==> red+hot+chili+peppers) and return the fully formatted Google

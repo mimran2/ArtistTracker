@@ -1,6 +1,8 @@
 package com.example.jareddonohue.artisttracker;
 
 
+import android.os.AsyncTask;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -10,7 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class HandleXML {
+public class HandleXML extends AsyncTask<URL, Integer, Long>{
     private String title = "title";
     private String link = "link";
     private String urlString = null;
@@ -24,6 +26,20 @@ public class HandleXML {
         this.urlString = url;
         this.newsItems = new ArrayList<>(20);
         this.artist = artist;
+    }
+
+
+    @Override
+    protected Long doInBackground(URL... urls) {
+        return 1L;
+    }
+
+    protected void onPreExecute(Long result) {
+
+    }
+
+    protected void onPostExecute(Long result) {
+
     }
 
     public ArrayList<NewsItem> getNewsItems(){
