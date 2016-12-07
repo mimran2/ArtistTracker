@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 public class PlaylistActivity extends AppCompatActivity {
     private ArrayList<Song> songList;
+    private ArrayList<Artist> artistList;
     private ListView songView;
     final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
 
@@ -35,8 +36,14 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
+        Intent intentFromMain = getIntent();
+        artistList = intentFromMain.getParcelableArrayListExtra(MainActivity.ARTIST_LIST);
+
         songView = (ListView) findViewById(R.id.song_list);
         songList = new ArrayList<Song>();
+
+        getPermissions();
+        fetchSongList();
 
         /*
         action listener for News button in top nav bar
@@ -47,8 +54,8 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //action for button goes here
-                Intent openPlaylistActivityIntent = new Intent(PlaylistActivity.this, MainActivity.class);
-                startActivity(openPlaylistActivityIntent);
+                Intent openMainActivityIntent = new Intent(PlaylistActivity.this, MainActivity.class);
+                startActivity(openMainActivityIntent);
             }
         });
 
@@ -61,13 +68,11 @@ public class PlaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //action for button goes here
-                Intent openPlaylistActivityIntent = new Intent(PlaylistActivity.this, ArtistsActivity.class);
-                startActivity(openPlaylistActivityIntent);
+                Intent openArtistActivityIntent = new Intent(PlaylistActivity.this, ArtistsActivity.class);
+                openArtistActivityIntent.putParcelableArrayListExtra(MainActivity.ARTIST_LIST,artistList);
+                startActivity(openArtistActivityIntent);
             }
         });
-
-        getPermissions();
-        fetchSongList();
 
         //create new instance of adapter class and set it to listView
         SongAdapter songAdt = new SongAdapter(this, songList);

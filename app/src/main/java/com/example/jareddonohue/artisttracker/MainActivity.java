@@ -1,15 +1,26 @@
 package com.example.jareddonohue.artisttracker;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,8 +28,15 @@ public class MainActivity extends AppCompatActivity {
     private String LANGUAGE = "en";
     private final static String pitchforkFeed   = "http://pitchfork.com/rss/news/";
     private final static String rollingstoneFee = "http://www.rollingstone.com/music/rss";
-    private ArrayList<String> artistList;
+
+    private ArrayList<Artist> artistList;
+    private HashSet<Artist> artistsInList;
+    private ArrayList<String> artistNames;
+
     public final static String URL_TO_LOAD = ""; // used for Intent
+    final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
+    public final static String ARTIST_LIST = "com.example.jareddonohue.artisttracker.ARTIST_LIST";
+
     private String finalUrl;
     private HandleXML xmlHandler;
     NewsItemAdapter adapter;
@@ -28,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        getPermissions();
+        fetchArtistList();
+        artistNames = getArtistNames();
 
         new GetNewsOperation().execute("");
 
@@ -41,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //action for button goes here
                 Intent openPlaylistActivityIntent = new Intent(MainActivity.this, PlaylistActivity.class);
+                openPlaylistActivityIntent.putParcelableArrayListExtra(ARTIST_LIST,artistList);
                 startActivity(openPlaylistActivityIntent);
             }
         });
@@ -54,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //action for button goes here
-                Intent openPlaylistActivityIntent = new Intent(MainActivity.this, ArtistsActivity.class);
-                startActivity(openPlaylistActivityIntent);
+                Intent openArtistActivityIntent = new Intent(MainActivity.this, ArtistsActivity.class);
+                openArtistActivityIntent.putParcelableArrayListExtra(ARTIST_LIST,artistList);
+                startActivity(openArtistActivityIntent);
             }
         });
     }
@@ -69,8 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params){
-            loadTrackedArtists();
-            fetchNewsItems(artistList);
+            fetchNewsItems(artistNames);
             return "done";
         }
 
@@ -107,9 +130,8 @@ public class MainActivity extends AppCompatActivity {
                 xmlHandler.fetchXML();
                 while(xmlHandler.parsingComplete);
 
-                // add top two stories to list to be displayed in News Feed
+                // add top top story to list to be displayed in News Feed
                 listItems.add(xmlHandler.getNewsItems().get(0));
-                listItems.add(xmlHandler.getNewsItems().get(1));
             }
         }
 
@@ -117,15 +139,9 @@ public class MainActivity extends AppCompatActivity {
         grab the artists we want to fetch news on and
         store them in ArrayList<String> artistList
         */
-        private void loadTrackedArtists(){
-            artistList = new ArrayList<String>();
-            artistList.add("The Growlers");
-            artistList.add("STRFKR");
-            artistList.add("Kanye West");
-            artistList.add("Funkadelic");
-            artistList.add("Led Zeppelin");
-            artistList.add("Red Hot Chili Peppers");
-        }
+//        private void loadTrackedArtists(){
+//            artistList = new ArrayList<String>();
+//        }
     }
 
 
@@ -169,5 +185,75 @@ public class MainActivity extends AppCompatActivity {
         String[] getUrl = url.split("url=");
         String link = getUrl[1];
         return link;
+    }
+
+    private ArrayList<String> getArtistNames(){
+        ArrayList<String> artistNames = new ArrayList<String>();
+        for(Artist a : artistList){
+            artistNames.add(a.getArtistName());
+        }
+        return artistNames;
+    }
+
+    private void fetchArtistList() {
+        artistsInList = new HashSet<>();
+        artistList = new ArrayList<>();
+        //retrieve song info
+        ContentResolver musicResolver = getContentResolver();
+        Uri musicUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        String selection = android.provider.MediaStore.Audio.Media.IS_MUSIC + "!=0";
+        Cursor musicCursor = musicResolver.query(musicUri, null, selection, null, null);
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            //get columns
+            int titleColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.TITLE);
+            int idColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media._ID);
+            int artistColumn = musicCursor.getColumnIndex
+                    (android.provider.MediaStore.Audio.Media.ARTIST);
+            //add songs to list
+            do {
+                long thisId = musicCursor.getLong(idColumn);
+                String thisTitle = musicCursor.getString(titleColumn);
+                String thisArtist = musicCursor.getString(artistColumn);
+                if(artistsInList.add(new Artist(thisArtist))) {
+                    artistList.add(new Artist(thisArtist));
+                }
+            }
+            while (musicCursor.moveToNext());
+        }
+
+        //sort the songs alphabetically
+        Collections.sort(artistList, new Comparator<Artist>() {
+            public int compare(Artist a, Artist b) {
+                return a.getArtistName().compareTo(b.getArtistName());
+            }
+        });
+    }
+
+    private void getPermissions(){
+        //ask for permissions at runtime
+        if (ContextCompat.checkSelfPermission(MainActivity.this,
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Toast.makeText(getApplicationContext(), "Need permission to read storage.", Toast.LENGTH_LONG).show();
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+            }
+        }
+        //end of runtime permissions code block
     }
 }
