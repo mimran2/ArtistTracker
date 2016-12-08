@@ -12,6 +12,7 @@ import android.widget.TextView;
 public class SongAdapter extends BaseAdapter {
     private ArrayList<Song> songs;
     private LayoutInflater songInf;
+
     public SongAdapter(Context c, ArrayList<Song> theSongs){
         songs=theSongs;
         songInf=LayoutInflater.from(c);
@@ -50,5 +51,4 @@ public class SongAdapter extends BaseAdapter {
         songLay.setTag(position);
         return songLay;
     }
-
 }

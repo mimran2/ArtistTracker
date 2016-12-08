@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:onClick="songPicked"
     android:orientation="vertical"
     android:padding="5dp" >
+
+    <!-- android:onClick="songPicked" might have to add this back to the <linearLayout> section-->
 
     <TextView
         android:id="@+id/song_title"

@@ -20,18 +20,6 @@
         android:layout_margin="0dp"
         android:padding="0dp">
 
-        <!-- top nav bar layout and buttons-->
-
-
-        <!-- list view to display news articles -->
-        <!-- end of list view to display news articles -->
-
-
-        <!-- media seek view-->
-        <!-- end of media seek view-->
-
-        <!-- bottom media control layout and views -->
-
         <LinearLayout
             android:id="@+id/mainBottomNavLayout"
             android:layout_width="fill_parent"
@@ -41,7 +29,6 @@
             android:weightSum="3"
             >
             <Button
-
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/mainPrevBtn"

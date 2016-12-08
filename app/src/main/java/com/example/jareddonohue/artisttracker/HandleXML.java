@@ -20,12 +20,16 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
     public String artist;
     private XmlPullParserFactory xmlFactoryObject;
     public volatile boolean parsingComplete = true;
+    private boolean isGoogleNews = false;
 
     public HandleXML(String url, String artist){
 
         this.urlString = url;
         this.newsItems = new ArrayList<>(20);
         this.artist = artist;
+        if(!(artist.equals("Rolling Stone") || artist.equals("Pitchfork"))){
+            isGoogleNews = true;
+        }
     }
 
 
@@ -68,12 +72,27 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
                     case XmlPullParser.END_TAG:
 
                         if(name.equals("title")){
+                            if(isGoogleNews) {
+                                if (text.matches(".*" + artist.toLowerCase() + ".*")) {
+                                    title = text;
+                                }else{
+                                    title = "";
+                                }
+                            }
                             title = text;
                         }
 
                         else if(name.equals("link")){
-                            link = text;
-
+                            // parse RSS <link> for the actual url if Google News
+                            if(isGoogleNews){
+                                // This is not one of the Title blocks of the RSS feed, accept
+                                if(!title.endsWith("Google News")) {
+                                    String[] getUrl = text.split("url=");
+                                    link = getUrl[1];
+                                }
+                            }else {
+                                link = text;
+                            }
                         }
 
                         else if(name.equals("item")){
