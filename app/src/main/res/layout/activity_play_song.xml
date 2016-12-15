@@ -32,6 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/mainPrevBtn"
+                android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
                 android:drawableRight="@mipmap/ic_prev"
                 android:gravity="center"
@@ -41,6 +42,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/mainPlayBtn"
+                android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
                 android:textColor="@drawable/custom_button_text"
                 android:drawableRight="@mipmap/ic_play"
@@ -51,6 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/mainNextBtn"
+                android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
                 android:textColor="@drawable/custom_button_text"
                 android:drawableRight="@mipmap/ic_next"
@@ -104,7 +107,9 @@
             android:layout_above="@+id/mainBottomNavLayout"
             android:layout_alignParentStart="true"
             android:paddingTop="10dip"
-            android:paddingBottom="10dip" />
+            android:paddingBottom="10dip"
+            android:background="@android:color/black"
+            android:progress="40" />
 
         <ImageView
             android:layout_width="match_parent"

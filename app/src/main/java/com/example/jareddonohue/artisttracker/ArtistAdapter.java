@@ -5,8 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -41,8 +44,9 @@ public class ArtistAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+
         //map to song layout
-        LinearLayout artistLay = (LinearLayout)artistInf.inflate
+        RelativeLayout artistLay = (RelativeLayout)artistInf.inflate
                 (R.layout.artist, parent, false);
         //get title and artist views
         TextView artistNameView = (TextView)artistLay.findViewById(R.id.artist_name);
@@ -54,6 +58,7 @@ public class ArtistAdapter extends BaseAdapter {
         artistInfoView.setText("Albums: " + currArtist.getNumAlbums() + ", Tracks: " + currArtist.getNumSongs());
         //set position as tag
         artistLay.setTag(position);
+
         return artistLay;
     }
 }

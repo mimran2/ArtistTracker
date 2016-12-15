@@ -9,7 +9,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,9 +25,13 @@ import android.widget.Toast;
 public class PlaylistActivity extends AppCompatActivity {
     private ArrayList<Song> songList;
     private ArrayList<Artist> artistList;
+    private ArrayList<NewsItem> listItems;
+    private ArrayList<String> artistNames;
+    int currentSongId = 0;
+
     //private ListView songView;
     final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    private MediaPlayer mediaPlayer = new MediaPlayer();
+    private MediaPlayer mediaPlayer;
     /*
             on create need to pull information about audio files on users device
             and populate a listview with artist name/audio file name
@@ -38,8 +41,12 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
+        mediaPlayer = new MediaPlayer();
+
         Intent intentFromMain = getIntent();
         artistList = intentFromMain.getParcelableArrayListExtra(MainActivity.ARTIST_LIST);
+        listItems  = intentFromMain.getParcelableArrayListExtra(MainActivity.SAVED_LIST_ITEMS);
+        artistNames  = intentFromMain.getStringArrayListExtra("artist_names");
 
         ListView songView = (ListView) findViewById(R.id.song_list);
         songList = new ArrayList<>();
@@ -56,6 +63,7 @@ public class PlaylistActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //action for button goes here
                 Intent openMainActivityIntent = new Intent(PlaylistActivity.this, MainActivity.class);
+                openMainActivityIntent.putParcelableArrayListExtra(MainActivity.SAVED_LIST_ITEMS,listItems);
                 startActivity(openMainActivityIntent);
             }
         });
@@ -70,9 +78,12 @@ public class PlaylistActivity extends AppCompatActivity {
                 //action for button goes here
                 Intent openArtistActivityIntent = new Intent(PlaylistActivity.this, ArtistsActivity.class);
                 openArtistActivityIntent.putParcelableArrayListExtra(MainActivity.ARTIST_LIST,artistList);
+                openArtistActivityIntent.putStringArrayListExtra("artist_names", artistNames);
                 startActivity(openArtistActivityIntent);
             }
         });
+
+
 
         getPermissions();
         fetchSongList();
@@ -88,24 +99,59 @@ public class PlaylistActivity extends AppCompatActivity {
         songView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                Toast.makeText(PlaylistActivity.this, "position: "+position+"\nsongTitle: "+songList.get(position).getTitle()+"\npath:"+songList.get(position).getPath().toString() , Toast.LENGTH_LONG).show();
-                                                //try playing media file here, might have to make media player a global variable
-                                                //to avoid it from being created every time a song is picked
-                                                //TODO: add a method in Song to return the path to the audio file
-                                                // try catch block to avoid IOException
-                                                // plays song at this point
-                                                try {
-                                                    mediaPlayer.setDataSource(songList.get(position).getPath().toString());
-                                                    mediaPlayer.prepare();
-                                                    mediaPlayer.start();
-                                                } catch (IOException e) {
-                                                    e.printStackTrace();
-                                                }
-
+                                                mediaPlayer.reset();
+                                                mediaPlayer = MediaPlayer.create(PlaylistActivity.this,
+                                                        Uri.parse(songList.get(position).getPath()));
+                                                mediaPlayer.start();
+                                                currentSongId=position;
                                             }
                                         }
         );
+
+        Button playPauseBtn = (Button) findViewById(R.id.playlistActivityPlayBtn);
+        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                }else{
+                    mediaPlayer.start();
+                }
+            }
+        });
+
+        // media controll buttons to play next/prev song
+        Button nextBtn = (Button) findViewById(R.id.playlistActivityNextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentSongId<songList.size()) {
+                    mediaPlayer.reset();
+                    mediaPlayer = MediaPlayer.create(PlaylistActivity.this, Uri.parse(songList.get(currentSongId+1).getPath()));
+                    currentSongId++;
+                    mediaPlayer.start();
+                }
+            }
+        });
+
+        // media controll buttons to play next/prev song
+        Button prevBtn = (Button) findViewById(R.id.playlistActivityPrevBtn);
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentSongId>0) {
+                    mediaPlayer.reset();
+                    mediaPlayer = MediaPlayer.create(PlaylistActivity.this, Uri.parse(songList.get(currentSongId-1).getPath()));
+                    currentSongId--;
+                    mediaPlayer.start();
+                }
+            }
+        });
     }
+
+    //playlistActivityPrevBtn
+
+
 
     // need to handle runtime permissions in a better fashion
     // as of right now the app crashes the first time this activity is opened

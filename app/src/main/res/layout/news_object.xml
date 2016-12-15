@@ -4,7 +4,7 @@
     android:layout_height="match_parent" >
     <TextView
         android:id="@+id/artist_name"
-        android:layout_height="wrap_content"
+        android:layout_height="120dip"
         android:text="Artist Name"
         android:textStyle="normal|bold"
         android:textSize="14sp"
@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/article_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="120dip"
         android:text="Article Title"
         android:textColor="@color/colorAccent"
         android:padding="10dp" />

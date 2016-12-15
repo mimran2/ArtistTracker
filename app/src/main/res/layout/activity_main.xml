@@ -47,6 +47,7 @@
                 android:background="@drawable/custom_button"
                 android:drawableRight="@mipmap/ic_prev"
                 android:gravity="center"
+                android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />
             <Button
@@ -57,6 +58,7 @@
                 android:textColor="@drawable/custom_button_text"
                 android:drawableRight="@mipmap/ic_play"
                 android:gravity="center"
+                android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />
             <Button
@@ -67,6 +69,7 @@
                 android:textColor="@drawable/custom_button_text"
                 android:drawableRight="@mipmap/ic_next"
                 android:gravity="center"
+                android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />
         </LinearLayout>
@@ -116,7 +119,9 @@
             android:layout_above="@+id/mainBottomNavLayout"
             android:layout_alignParentStart="true"
             android:paddingTop="10dip"
-            android:paddingBottom="10dip" />
+            android:paddingBottom="10dip"
+            android:background="@android:color/black"
+            android:progress="40" />
 
         <ProgressBar
             style="?android:attr/progressBarStyle"

@@ -21,12 +21,15 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
     private XmlPullParserFactory xmlFactoryObject;
     public volatile boolean parsingComplete = true;
     private boolean isGoogleNews = false;
+    private boolean isMainNews;
+    private boolean keepGoing = true;
 
-    public HandleXML(String url, String artist){
+    public HandleXML(String url, String artist, boolean isMainNews){
 
         this.urlString = url;
         this.newsItems = new ArrayList<>(20);
         this.artist = artist;
+        this.isMainNews = isMainNews;
         if(!(artist.equals("Rolling Stone") || artist.equals("Pitchfork"))){
             isGoogleNews = true;
         }
@@ -36,10 +39,6 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
     @Override
     protected Long doInBackground(URL... urls) {
         return 1L;
-    }
-
-    protected void onPreExecute(Long result) {
-
     }
 
     protected void onPostExecute(Long result) {
@@ -58,7 +57,7 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
             event = myParser.getEventType();
             NewsItem currNewsItem;
 
-            while (event != XmlPullParser.END_DOCUMENT) {
+            while (event != XmlPullParser.END_DOCUMENT && keepGoing) {
                 String name=myParser.getName();
 
                 switch (event){
@@ -73,13 +72,15 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
 
                         if(name.equals("title")){
                             if(isGoogleNews) {
-                                if (text.matches(".*" + artist.toLowerCase() + ".*")) {
+                                if (text.matches("(?i:.*" + artist.toLowerCase() + ".*)")) {
                                     title = text;
                                 }else{
                                     title = "";
+
                                 }
+                            }else {
+                                title = text;
                             }
-                            title = text;
                         }
 
                         else if(name.equals("link")){
@@ -100,6 +101,10 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
                             this.newsItems.add(currNewsItem);
                             title = "";
                             link  = "";
+                            if(!isMainNews) {
+                                keepGoing = false;
+                                parsingComplete = false;
+                            }
                         }
 
                         else{
@@ -131,8 +136,8 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
                     URL url = new URL(urlString);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setReadTimeout(3000 /* milliseconds */);
+                    conn.setConnectTimeout(4000 /* milliseconds */);
                     conn.setRequestMethod("GET");
                     conn.setDoInput(true);
 

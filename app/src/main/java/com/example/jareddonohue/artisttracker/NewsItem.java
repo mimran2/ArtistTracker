@@ -1,8 +1,10 @@
 package com.example.jareddonohue.artisttracker;
 
 
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class NewsItem {
+public class NewsItem implements Parcelable{
     private String artist;
     private String title;
     private String link;
@@ -16,6 +18,24 @@ public class NewsItem {
     NewsItem(){
         this("","","");
     }
+
+    protected NewsItem(Parcel in) {
+        artist = in.readString();
+        title = in.readString();
+        link = in.readString();
+    }
+
+    public static final Creator<NewsItem> CREATOR = new Creator<NewsItem>() {
+        @Override
+        public NewsItem createFromParcel(Parcel in) {
+            return new NewsItem(in);
+        }
+
+        @Override
+        public NewsItem[] newArray(int size) {
+            return new NewsItem[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -58,5 +78,17 @@ public class NewsItem {
         result = 31 * result + (title != null ? title.hashCode() : 0);
         result = 31 * result + (link != null ? link.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(artist);
+        dest.writeString(title);
+        dest.writeString(link);
     }
 }

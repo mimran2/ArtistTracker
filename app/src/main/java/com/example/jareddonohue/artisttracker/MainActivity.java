@@ -24,8 +24,6 @@ import java.util.HashSet;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String COUNTRY = "us";
-    private String LANGUAGE = "en";
     private final static String pitchforkFeed   = "http://pitchfork.com/rss/news/";
     private final static String rollingstoneFeed = "http://www.rollingstone.com/music/rss";
 
@@ -36,12 +34,10 @@ public class MainActivity extends AppCompatActivity {
     public final static String URL_TO_LOAD = ""; // used for Intent
     final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     public final static String ARTIST_LIST = "com.example.jareddonohue.artisttracker.ARTIST_LIST";
+    public final static String SAVED_LIST_ITEMS = "com.example.jareddonohue.artisttracker.SAVED_LIST_ITEMS";
 
-    private String finalUrl;
-    private HandleXML xmlHandler;
     NewsItemAdapter adapter;
     ArrayList<NewsItem> listItems = new ArrayList<>();
-    ArrayList<NewsItem> googleNewsItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         getPermissions();
-        fetchArtistList();
-        artistNames = getArtistNames();
 
         new GetNewsOperation().execute("");
 
@@ -65,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 //action for button goes here
                 Intent openPlaylistActivityIntent = new Intent(MainActivity.this, PlaylistActivity.class);
                 openPlaylistActivityIntent.putParcelableArrayListExtra(ARTIST_LIST,artistList);
+                openPlaylistActivityIntent.putParcelableArrayListExtra(SAVED_LIST_ITEMS,listItems);
                 startActivity(openPlaylistActivityIntent);
             }
         });
@@ -80,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
                 //action for button goes here
                 Intent openArtistActivityIntent = new Intent(MainActivity.this, ArtistsActivity.class);
                 openArtistActivityIntent.putParcelableArrayListExtra(ARTIST_LIST,artistList);
+                openArtistActivityIntent.putParcelableArrayListExtra(SAVED_LIST_ITEMS,artistList);
+                openArtistActivityIntent.putStringArrayListExtra("artist_names",artistNames);
                 startActivity(openArtistActivityIntent);
             }
         });
@@ -94,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params){
+            fetchArtistList();
+            artistNames = getArtistNames();
             fetchNewsItems(artistNames);
             return "done";
         }
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             display the ListView of NewsItems using the NewsItemAdapter class
             */
             initializeListView();
+
         }
 
         /*
@@ -125,55 +125,19 @@ public class MainActivity extends AppCompatActivity {
             // and http://www.rollingstone.com/music/rss for any matches
             // with our tracked artists.
 
-            HandleXML fetchRollingStone = new HandleXML(rollingstoneFeed, "Rolling Stone");
+            HandleXML fetchRollingStone = new HandleXML(rollingstoneFeed, "Rolling Stone", true);
             fetchRollingStone.fetchXML();
             while(fetchRollingStone.parsingComplete);
             ArrayList<NewsItem> rollingStoneNewsItems = fetchRollingStone.getNewsItems();
 
-            HandleXML fetchPitchfork = new HandleXML(pitchforkFeed, "Pitchfork");
+            HandleXML fetchPitchfork = new HandleXML(pitchforkFeed, "Pitchfork", true);
             fetchPitchfork.fetchXML();
             while(fetchPitchfork.parsingComplete);
             ArrayList<NewsItem> pitchforkNewsItems = fetchPitchfork.getNewsItems();
 
-
-            for(String artist : artistList){
-                finalUrl = getGoogleSearchQuery(artist);
-                xmlHandler = new HandleXML(finalUrl, artist);
-                xmlHandler.fetchXML();
-                while(xmlHandler.parsingComplete);
-
-                // add top top story to list to be displayed in News Feed
-                googleNewsItems.addAll(xmlHandler.getNewsItems());
-            }
-
-            // Algorithm to select from News Lists
-            // Add selected new items to the listItems to display
-
-            listItems.addAll(googleNewsItems);
             listItems.addAll(rollingStoneNewsItems);
             listItems.addAll(pitchforkNewsItems);
         }
-    }
-
-
-    // format the Artist to Google RSS format (i.e. Red Hot Chili Peppers
-    // ==> red+hot+chili+peppers) and return the fully formatted Google
-    // RSS query string
-    private String getGoogleSearchQuery(String query) {
-        query = query.toLowerCase();
-        String[] words = query.split(" ");
-        String result = "";
-
-        int i;
-        for (i = 0; i < words.length - 1; i++) {
-            result += words[i] + "+";
-        }
-        result += words[i];
-
-        String queryString = "https://news.google.com/news/feeds?pz=1&cf=all&ned="
-                + LANGUAGE + "&hl=" + COUNTRY + "&q=" + result + "&output=rss";
-
-        return queryString;
     }
 
     private void initializeListView(){
@@ -237,12 +201,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void getPermissions(){
         //ask for permissions at runtime
-        if (ContextCompat.checkSelfPermission(MainActivity.this,
+        if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 Toast.makeText(getApplicationContext(), "Need permission to read storage.", Toast.LENGTH_LONG).show();
                 // Show an explanation to the user *asynchronously* -- don't block
@@ -253,11 +217,37 @@ public class MainActivity extends AppCompatActivity {
 
                 // No explanation needed, we can request the permission.
 
-                ActivityCompat.requestPermissions(MainActivity.this,
+                ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
             }
         }
         //end of runtime permissions code block
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+                    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }
