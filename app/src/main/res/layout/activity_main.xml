@@ -11,13 +11,15 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.jareddonohue.artisttracker.MainActivity"
     android:weightSum="1"
-    android:padding="0dp">
+    android:padding="0dp"
+    android:background="@color/colorActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="0dp"
-        android:padding="0dp">
+        android:padding="0dp"
+        android:background="@color/colorActivity">
 
         <!-- top nav bar layout and buttons-->
 
@@ -38,6 +40,7 @@
             android:orientation="horizontal"
             android:layout_alignParentBottom="true"
             android:weightSum="3"
+            android:background="@color/colorActivity"
             >
             <Button
 
@@ -55,7 +58,6 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/mainPlayBtn"
                 android:background="@drawable/custom_button"
-                android:textColor="@drawable/custom_button_text"
                 android:drawableRight="@mipmap/ic_play"
                 android:gravity="center"
                 android:paddingRight="40dp"
@@ -81,7 +83,8 @@
             android:orientation="horizontal"
             android:weightSum="3"
             android:layout_alignParentTop="true"
-            android:layout_alignParentStart="true">
+            android:layout_alignParentStart="true"
+            android:background="@color/colorActivity">
 
             <Button
                 android:text="News"
@@ -121,7 +124,7 @@
             android:paddingTop="10dip"
             android:paddingBottom="10dip"
             android:background="@android:color/black"
-            android:progress="40" />
+            android:progress="50" />
 
         <ProgressBar
             style="?android:attr/progressBarStyle"
