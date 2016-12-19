@@ -128,38 +128,36 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
     }
 
     public void fetchXML(){
-        Thread thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
 
-                try {
-                    URL url = new URL(urlString);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    try {
+                        URL url = new URL(urlString);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-                    conn.setReadTimeout(3000 /* milliseconds */);
-                    conn.setConnectTimeout(4000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
+                        conn.setReadTimeout(3000 /* milliseconds */);
+                        conn.setConnectTimeout(4000 /* milliseconds */);
+                        conn.setRequestMethod("GET");
+                        conn.setDoInput(true);
 
-                    // Starts the query
-                    conn.connect();
-                    InputStream stream = conn.getInputStream();
+                        // Starts the query
+                        conn.connect();
+                        InputStream stream = conn.getInputStream();
 
-                    xmlFactoryObject = XmlPullParserFactory.newInstance();
-                    XmlPullParser myparser = xmlFactoryObject.newPullParser();
+                        xmlFactoryObject = XmlPullParserFactory.newInstance();
+                        XmlPullParser myparser = xmlFactoryObject.newPullParser();
 
-                    myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
-                    myparser.setInput(stream, null);
+                        myparser.setFeature(XmlPullParser.FEATURE_PROCESS_NAMESPACES, false);
+                        myparser.setInput(stream, null);
 
-                    parseXMLAndStoreIt(myparser);
-                    stream.close();
+                        parseXMLAndStoreIt(myparser);
+                        stream.close();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                 }
-
-                catch (Exception e) {
-                    System.out.println(e);
-                }
-            }
-        });
-        thread.start();
-    }
+            });
+            thread.start();
+        }
 }

@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlaylistActivity extends AppCompatActivity {
@@ -90,7 +91,7 @@ public class PlaylistActivity extends AppCompatActivity {
 
         //create new instance of adapter class and set it to listView
         // dont forget to uncomment this if crashes
-        SongAdapter songAdt = new SongAdapter(this, songList);
+        final SongAdapter songAdt = new SongAdapter(this, songList);
         songView.setAdapter(songAdt);
 
         //TODO: move this to a separate function
@@ -104,6 +105,9 @@ public class PlaylistActivity extends AppCompatActivity {
                                                         Uri.parse(songList.get(position).getPath()));
                                                 mediaPlayer.start();
                                                 currentSongId=position;
+                                                Toast.makeText(PlaylistActivity.this, "Now playing " + songList.get(position).getTitle() + "" +
+                                                        " by " + songList.get(position).getArtist(), Toast.LENGTH_LONG).show();
+
                                             }
                                         }
         );
@@ -120,7 +124,7 @@ public class PlaylistActivity extends AppCompatActivity {
             }
         });
 
-        // media controll buttons to play next/prev song
+        // media control buttons to play next/prev song
         Button nextBtn = (Button) findViewById(R.id.playlistActivityNextBtn);
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override

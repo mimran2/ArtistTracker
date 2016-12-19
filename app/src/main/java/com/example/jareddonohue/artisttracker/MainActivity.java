@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private HashSet<Artist> artistsInList;
     private ArrayList<String> artistNames;
 
-    public final static String URL_TO_LOAD = ""; // used for Intent
+    public final static String URL_TO_LOAD = "com.example.jareddonohue.artisttracker.URL_TO_LOAD"; // used for Intent
     final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
     public final static String ARTIST_LIST = "com.example.jareddonohue.artisttracker.ARTIST_LIST";
     public final static String SAVED_LIST_ITEMS = "com.example.jareddonohue.artisttracker.SAVED_LIST_ITEMS";

@@ -125,7 +125,7 @@
             android:paddingTop="10dip"
             android:paddingBottom="10dip"
             android:background="@android:color/black"
-            android:progress="40" />
+            android:progress="50" />
 
         <ListView
             android:layout_width="match_parent"

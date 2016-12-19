@@ -21,7 +21,6 @@ public class ArtistsActivity extends AppCompatActivity{
     private String COUNTRY = "us";
     private String LANGUAGE = "en";
     private ListView artistView;
-    public final static String URL_TO_LOAD = "url"; // used for Intent
     private String finalUrl;
     private HandleXML xmlHandler;
     ArrayList<NewsItem> googleNewsItems = new ArrayList<>();
@@ -40,7 +39,7 @@ public class ArtistsActivity extends AppCompatActivity{
         this.artistList = intentFromMain.getParcelableArrayListExtra(MainActivity.ARTIST_LIST);
         this.artistNames = intentFromMain.getStringArrayListExtra("artist_names");
 
-        new ArtistsActivity.GetNewsOperation().execute("");
+        new ArtistsActivity.GetArtistNewsOperation().execute("");
 
         /*
         action listener for News button in top nav bar
@@ -82,7 +81,7 @@ public class ArtistsActivity extends AppCompatActivity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String url = listItems.get(position).getLink();
                 Intent intent = new Intent(getApplicationContext(), ArticleView.class);
-                intent.putExtra(URL_TO_LOAD, url);
+                intent.putExtra(MainActivity.URL_TO_LOAD, url);
                 startActivity(intent);
             }
         });
@@ -109,7 +108,7 @@ public class ArtistsActivity extends AppCompatActivity{
         return queryString;
     }
 
-    private class GetNewsOperation extends AsyncTask<String, String, String> {
+    private class GetArtistNewsOperation extends AsyncTask<String, String, String> {
 
         @Override
         protected void onPreExecute(){
@@ -145,10 +144,12 @@ public class ArtistsActivity extends AppCompatActivity{
         fetch XML, parse it and store the NewsItems (Title, Link)
         in ArrayList<NewsItem> listItems
         */
-        private void fetchNewsItems(ArrayList<String> artistList){
+        private void fetchNewsItems(ArrayList<String> artistList) {
             // first search http://pitchfork.com/rss/news/
             // and http://www.rollingstone.com/music/rss for any matches
             // with our tracked artists.
+
+
             for(String artist : artistList){
                 finalUrl = getGoogleSearchQuery(artist);
                 xmlHandler = new HandleXML(finalUrl, artist, false);
@@ -158,6 +159,21 @@ public class ArtistsActivity extends AppCompatActivity{
                 // add top top story to list to be displayed in News Feed
                 googleNewsItems.addAll(xmlHandler.getNewsItems());
             }
+
+//            for (String artist : artistList) {
+//                finalUrl = getGoogleSearchQuery(artist);
+//                xmlHandler = new HandleXML(finalUrl, artist, false);
+//                Thread thread = new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        xmlHandler.fetchXML();
+//                        while (xmlHandler.parsingComplete) ;
+//                        googleNewsItems.addAll(xmlHandler.getNewsItems());
+//                    }
+//                });
+//                thread.start();
+//            }
+
 
             // Algorithm to select from News Lists
             // Add selected new items to the listItems to display
