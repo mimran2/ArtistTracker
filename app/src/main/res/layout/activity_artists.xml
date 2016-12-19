@@ -46,17 +46,17 @@
 
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/mainPrevBtn"
                 android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
-                android:drawableRight="@mipmap/ic_prev"
+                android:drawableRight="@mipmap/ic_prev_song"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:id="@+id/artistPrevBtn" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/mainPlayBtn"
+                android:id="@+id/artistPlayBtn"
                 android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
                 android:textColor="@drawable/custom_button_text"
@@ -67,11 +67,11 @@
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/mainNextBtn"
+                android:id="@+id/artistNextBtn"
                 android:paddingRight="40dp"
                 android:background="@drawable/custom_button"
                 android:textColor="@drawable/custom_button_text"
-                android:drawableRight="@mipmap/ic_next"
+                android:drawableRight="@mipmap/ic_next_song"
                 android:gravity="center"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />

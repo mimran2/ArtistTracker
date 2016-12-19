@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.app.ActivityCompat;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent openPlaylistActivityIntent = new Intent(MainActivity.this, PlaylistActivity.class);
                 openPlaylistActivityIntent.putParcelableArrayListExtra(ARTIST_LIST,artistList);
                 openPlaylistActivityIntent.putParcelableArrayListExtra(SAVED_LIST_ITEMS,listItems);
+                openPlaylistActivityIntent.putStringArrayListExtra("artist_names",artistNames);
                 startActivity(openPlaylistActivityIntent);
             }
         });
@@ -78,6 +80,62 @@ public class MainActivity extends AppCompatActivity {
                 openArtistActivityIntent.putParcelableArrayListExtra(SAVED_LIST_ITEMS,artistList);
                 openArtistActivityIntent.putStringArrayListExtra("artist_names",artistNames);
                 startActivity(openArtistActivityIntent);
+            }
+        });
+
+
+        // Media Player Buttons
+        Button playPauseBtn = (Button) findViewById(R.id.mainPlayBtn);
+        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.mediaPlayer.isPlaying()) {
+                        PlaylistActivity.mediaPlayer.pause();
+                    } else {
+                        PlaylistActivity.mediaPlayer.start();
+                    }
+                }
+            }
+        });
+
+        // media control buttons to play next/prev song
+        Button nextBtn = (Button) findViewById(R.id.mainNextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.currentSongId < PlaylistActivity.songList.size()) {
+                        PlaylistActivity.mediaPlayer.reset();
+                        PlaylistActivity.mediaPlayer = MediaPlayer.create(MainActivity.this,
+                                Uri.parse(PlaylistActivity.songList.get(PlaylistActivity.currentSongId + 1).getPath()));
+                        PlaylistActivity.currentSongId++;
+                        PlaylistActivity.mediaPlayer.start();
+                        Toast.makeText(MainActivity.this, "Now playing " + PlaylistActivity.songList.get
+                                (PlaylistActivity.currentSongId).getTitle() + "" +
+                                " by " + PlaylistActivity.songList.get(PlaylistActivity.currentSongId).getArtist(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+
+        // media control buttons to play next/prev song
+        Button prevBtn = (Button) findViewById(R.id.mainPrevBtn);
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.currentSongId > 0) {
+                        PlaylistActivity.mediaPlayer.reset();
+                        PlaylistActivity.mediaPlayer = MediaPlayer.create(MainActivity.this,
+                                Uri.parse(PlaylistActivity.songList.get(PlaylistActivity.currentSongId - 1).getPath()));
+                        PlaylistActivity.currentSongId--;
+                        PlaylistActivity.mediaPlayer.start();
+                        Toast.makeText(MainActivity.this, "Now playing " + PlaylistActivity.songList.get
+                                (PlaylistActivity.currentSongId).getTitle() + "" +
+                                " by " + PlaylistActivity.songList.get(PlaylistActivity.currentSongId).getArtist(), Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         });
     }

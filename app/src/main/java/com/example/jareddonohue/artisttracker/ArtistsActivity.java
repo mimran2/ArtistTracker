@@ -1,6 +1,8 @@
 package com.example.jareddonohue.artisttracker;
 
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 /**
@@ -39,7 +43,7 @@ public class ArtistsActivity extends AppCompatActivity{
         this.artistList = intentFromMain.getParcelableArrayListExtra(MainActivity.ARTIST_LIST);
         this.artistNames = intentFromMain.getStringArrayListExtra("artist_names");
 
-        new ArtistsActivity.GetArtistNewsOperation().execute("");
+        new ArtistsActivity.GetArtistNewsOperation(artistNames).execute("");
 
         /*
         action listener for News button in top nav bar
@@ -68,6 +72,62 @@ public class ArtistsActivity extends AppCompatActivity{
                 openPlaylistActivityIntent.putParcelableArrayListExtra(MainActivity.ARTIST_LIST,artistList);
                 openPlaylistActivityIntent.putStringArrayListExtra("artist_names",artistNames);
                 startActivity(openPlaylistActivityIntent);
+            }
+        });
+
+
+        // Media Player Buttons
+        Button playPauseBtn = (Button) findViewById(R.id.artistPlayBtn);
+        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v){
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.mediaPlayer.isPlaying()) {
+                        PlaylistActivity.mediaPlayer.pause();
+                    } else {
+                        PlaylistActivity.mediaPlayer.start();
+                    }
+                }
+            }
+        });
+
+        // media control buttons to play next/prev song
+        Button nextBtn = (Button) findViewById(R.id.artistNextBtn);
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.currentSongId < PlaylistActivity.songList.size()) {
+                        PlaylistActivity.mediaPlayer.reset();
+                        PlaylistActivity.mediaPlayer = MediaPlayer.create(ArtistsActivity.this,
+                                Uri.parse(PlaylistActivity.songList.get(PlaylistActivity.currentSongId + 1).getPath()));
+                        PlaylistActivity.currentSongId++;
+                        PlaylistActivity.mediaPlayer.start();
+                        Toast.makeText(ArtistsActivity.this, "Now playing " + PlaylistActivity.songList.get
+                                (PlaylistActivity.currentSongId).getTitle() + "" +
+                                " by " + PlaylistActivity.songList.get(PlaylistActivity.currentSongId).getArtist(), Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+
+        // media control buttons to play next/prev song
+        Button prevBtn = (Button) findViewById(R.id.artistPrevBtn);
+        prevBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(PlaylistActivity.mediaPlayer != null) {
+                    if (PlaylistActivity.currentSongId > 0) {
+                        PlaylistActivity.mediaPlayer.reset();
+                        PlaylistActivity.mediaPlayer = MediaPlayer.create(ArtistsActivity.this,
+                                Uri.parse(PlaylistActivity.songList.get(PlaylistActivity.currentSongId - 1).getPath()));
+                        PlaylistActivity.currentSongId--;
+                        PlaylistActivity.mediaPlayer.start();
+                        Toast.makeText(ArtistsActivity.this, "Now playing " + PlaylistActivity.songList.get
+                                (PlaylistActivity.currentSongId).getTitle() + "" +
+                                " by " + PlaylistActivity.songList.get(PlaylistActivity.currentSongId).getArtist(), Toast.LENGTH_LONG).show();
+                    }
+                }
             }
         });
     }
@@ -110,6 +170,13 @@ public class ArtistsActivity extends AppCompatActivity{
 
     private class GetArtistNewsOperation extends AsyncTask<String, String, String> {
 
+        ArrayList<String> artistNames;
+
+        public GetArtistNewsOperation(ArrayList<String> artistNames){
+            super();
+            this.artistNames = artistNames;
+        }
+
         @Override
         protected void onPreExecute(){
 
@@ -117,7 +184,7 @@ public class ArtistsActivity extends AppCompatActivity{
 
         @Override
         protected String doInBackground(String... params){
-            fetchNewsItems(artistNames);
+            fetchNewsItems(this.artistNames);
             return "done";
         }
 
@@ -172,6 +239,11 @@ public class ArtistsActivity extends AppCompatActivity{
 //                    }
 //                });
 //                thread.start();
+//                try {
+//                    thread.join();
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 //            }
 
 

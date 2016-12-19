@@ -24,15 +24,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class PlaylistActivity extends AppCompatActivity {
-    private ArrayList<Song> songList;
+    public static ArrayList<Song> songList;
     private ArrayList<Artist> artistList;
     private ArrayList<NewsItem> listItems;
     private ArrayList<String> artistNames;
-    int currentSongId = 0;
+    public static int currentSongId = 0;
+    public static boolean musicPlayerCreated = false;
 
     //private ListView songView;
     final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 1;
-    private MediaPlayer mediaPlayer;
+    public static MediaPlayer mediaPlayer;
     /*
             on create need to pull information about audio files on users device
             and populate a listview with artist name/audio file name
@@ -42,7 +43,10 @@ public class PlaylistActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
 
-        mediaPlayer = new MediaPlayer();
+        if(!musicPlayerCreated) {
+            mediaPlayer = new MediaPlayer();
+            musicPlayerCreated = true;
+        }
 
         Intent intentFromMain = getIntent();
         artistList = intentFromMain.getParcelableArrayListExtra(MainActivity.ARTIST_LIST);
@@ -52,7 +56,6 @@ public class PlaylistActivity extends AppCompatActivity {
         ListView songView = (ListView) findViewById(R.id.song_list);
         songList = new ArrayList<>();
 
-        //mediaPlayer = new  MediaPlayer();
 
         /*
         action listener for News button in top nav bar

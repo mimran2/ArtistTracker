@@ -122,9 +122,6 @@ public class HandleXML extends AsyncTask<URL, Integer, Long>{
         catch (Exception e) {
             e.printStackTrace();
         }
-
-        System.out.println("\n\n" + newsItems.size() + "\n\n");
-
     }
 
     public void fetchXML(){

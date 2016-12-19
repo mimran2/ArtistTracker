@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/mainPrevBtn"
                 android:background="@drawable/custom_button"
-                android:drawableRight="@mipmap/ic_prev"
+                android:drawableRight="@mipmap/ic_prev_song"
                 android:gravity="center"
                 android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
@@ -63,13 +63,14 @@
                 android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/mainNextBtn"
                 android:background="@drawable/custom_button"
+                android:drawableRight="@mipmap/ic_next_song"
                 android:textColor="@drawable/custom_button_text"
-                android:drawableRight="@mipmap/ic_next"
                 android:gravity="center"
                 android:paddingRight="40dp"
                 android:layout_gravity="center_horizontal"
